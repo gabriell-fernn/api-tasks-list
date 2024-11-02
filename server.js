@@ -12,20 +12,18 @@ app.use(cors());
 
 app.post("/tarefas", async (req, res) => {
 	try {
-		// Recupera todas as tarefas existentes para calcular o próximo displayOrder
 		const existingTasks = await prisma.task.findMany();
 		const maxDisplayOrder =
 			existingTasks.length > 0
 				? Math.max(...existingTasks.map((task) => task.displayOrder))
 				: 0;
 
-		// Cria a nova tarefa com o displayOrder incrementado
 		const newTask = await prisma.task.create({
 			data: {
 				name: req.body.name,
 				cost: Number.parseFloat(req.body.cost),
 				deadline: new Date(req.body.deadline),
-				displayOrder: maxDisplayOrder + 1, // Incrementa o displayOrder
+				displayOrder: maxDisplayOrder + 1,
 			},
 		});
 
@@ -44,23 +42,23 @@ app.get("/tarefas", async (req, res) => {
 app.put("/tarefas/:id", async (req, res) => {
 	await prisma.task.update({
 		where: {
-			id: req.params.id, // Passar diretamente como string
+			id: req.params.id,
 		},
 		data: {
 			name: req.body.name,
-			cost: Number.parseFloat(req.body.cost), // Certifique-se de converter o custo para float
+			cost: Number.parseFloat(req.body.cost),
 			deadline: new Date(req.body.deadline),
 		},
 	});
 
-	res.status(200).json(req.body); // Use 200 para sucesso na atualização
+	res.status(200).json(req.body);
 });
 
 app.delete("/tarefas/:id", async (req, res) => {
 	const taskId = req.params.id;
 	await prisma.task.delete({
 		where: {
-			id: taskId, // Converter para inteiro
+			id: taskId,
 		},
 	});
 
